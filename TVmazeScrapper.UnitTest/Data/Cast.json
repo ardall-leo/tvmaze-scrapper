@@ -1,0 +1,286 @@
+[
+  {
+    "person": {
+      "id": 88,
+      "url": "https://www.tvmaze.com/people/88/james-caviezel",
+      "name": "James Caviezel",
+      "country": {
+        "name": "United States",
+        "code": "US",
+        "timezone": "America/New_York"
+      },
+      "birthday": "1968-09-26",
+      "deathday": null,
+      "gender": "Male",
+      "image": {
+        "medium": "https://static.tvmaze.com/uploads/images/medium_portrait/2/6581.jpg",
+        "original": "https://static.tvmaze.com/uploads/images/original_untouched/2/6581.jpg"
+      },
+      "updated": 1578390834,
+      "_links": {
+        "self": {
+          "href": "https://api.tvmaze.com/people/88"
+        }
+      }
+    },
+    "character": {
+      "id": 64,
+      "url": "https://www.tvmaze.com/characters/64/person-of-interest-john-reese",
+      "name": "John Reese",
+      "image": {
+        "medium": "https://static.tvmaze.com/uploads/images/medium_portrait/0/13.jpg",
+        "original": "https://static.tvmaze.com/uploads/images/original_untouched/0/13.jpg"
+      },
+      "_links": {
+        "self": {
+          "href": "https://api.tvmaze.com/characters/64"
+        }
+      }
+    },
+    "self": false,
+    "voice": false
+  },
+  {
+    "person": {
+      "id": 93,
+      "url": "https://www.tvmaze.com/people/93/michael-emerson",
+      "name": "Michael Emerson",
+      "country": {
+        "name": "United States",
+        "code": "US",
+        "timezone": "America/New_York"
+      },
+      "birthday": "1954-09-07",
+      "deathday": null,
+      "gender": "Male",
+      "image": {
+        "medium": "https://static.tvmaze.com/uploads/images/medium_portrait/2/6590.jpg",
+        "original": "https://static.tvmaze.com/uploads/images/original_untouched/2/6590.jpg"
+      },
+      "updated": 1642557266,
+      "_links": {
+        "self": {
+          "href": "https://api.tvmaze.com/people/93"
+        }
+      }
+    },
+    "character": {
+      "id": 69,
+      "url": "https://www.tvmaze.com/characters/69/person-of-interest-harold-finch",
+      "name": "Harold Finch",
+      "image": {
+        "medium": "https://static.tvmaze.com/uploads/images/medium_portrait/0/12.jpg",
+        "original": "https://static.tvmaze.com/uploads/images/original_untouched/0/12.jpg"
+      },
+      "_links": {
+        "self": {
+          "href": "https://api.tvmaze.com/characters/69"
+        }
+      }
+    },
+    "self": false,
+    "voice": false
+  },
+  {
+    "person": {
+      "id": 90,
+      "url": "https://www.tvmaze.com/people/90/kevin-chapman",
+      "name": "Kevin Chapman",
+      "country": {
+        "name": "United States",
+        "code": "US",
+        "timezone": "America/New_York"
+      },
+      "birthday": "1962-07-29",
+      "deathday": null,
+      "gender": "Male",
+      "image": {
+        "medium": "https://static.tvmaze.com/uploads/images/medium_portrait/2/6588.jpg",
+        "original": "https://static.tvmaze.com/uploads/images/original_untouched/2/6588.jpg"
+      },
+      "updated": 1645982017,
+      "_links": {
+        "self": {
+          "href": "https://api.tvmaze.com/people/90"
+        }
+      }
+    },
+    "character": {
+      "id": 66,
+      "url": "https://www.tvmaze.com/characters/66/person-of-interest-lionel-fusco",
+      "name": "Lionel Fusco",
+      "image": {
+        "medium": "https://static.tvmaze.com/uploads/images/medium_portrait/0/1165.jpg",
+        "original": "https://static.tvmaze.com/uploads/images/original_untouched/0/1165.jpg"
+      },
+      "_links": {
+        "self": {
+          "href": "https://api.tvmaze.com/characters/66"
+        }
+      }
+    },
+    "self": false,
+    "voice": false
+  },
+  {
+    "person": {
+      "id": 89,
+      "url": "https://www.tvmaze.com/people/89/taraji-p-henson",
+      "name": "Taraji P. Henson",
+      "country": {
+        "name": "United States",
+        "code": "US",
+        "timezone": "America/New_York"
+      },
+      "birthday": "1970-09-11",
+      "deathday": null,
+      "gender": "Female",
+      "image": {
+        "medium": "https://static.tvmaze.com/uploads/images/medium_portrait/321/802998.jpg",
+        "original": "https://static.tvmaze.com/uploads/images/original_untouched/321/802998.jpg"
+      },
+      "updated": 1645236443,
+      "_links": {
+        "self": {
+          "href": "https://api.tvmaze.com/people/89"
+        }
+      }
+    },
+    "character": {
+      "id": 65,
+      "url": "https://www.tvmaze.com/characters/65/person-of-interest-jocelyn-joss-carter",
+      "name": "Jocelyn \"Joss\" Carter",
+      "image": {
+        "medium": "https://static.tvmaze.com/uploads/images/medium_portrait/0/1164.jpg",
+        "original": "https://static.tvmaze.com/uploads/images/original_untouched/0/1164.jpg"
+      },
+      "_links": {
+        "self": {
+          "href": "https://api.tvmaze.com/characters/65"
+        }
+      }
+    },
+    "self": false,
+    "voice": false
+  },
+  {
+    "person": {
+      "id": 91,
+      "url": "https://www.tvmaze.com/people/91/amy-acker",
+      "name": "Amy Acker",
+      "country": {
+        "name": "United States",
+        "code": "US",
+        "timezone": "America/New_York"
+      },
+      "birthday": "1976-12-05",
+      "deathday": null,
+      "gender": "Female",
+      "image": {
+        "medium": "https://static.tvmaze.com/uploads/images/medium_portrait/335/837994.jpg",
+        "original": "https://static.tvmaze.com/uploads/images/original_untouched/335/837994.jpg"
+      },
+      "updated": 1650340081,
+      "_links": {
+        "self": {
+          "href": "https://api.tvmaze.com/people/91"
+        }
+      }
+    },
+    "character": {
+      "id": 67,
+      "url": "https://www.tvmaze.com/characters/67/person-of-interest-samantha-root-groves",
+      "name": "Samantha \"Root\" Groves",
+      "image": {
+        "medium": "https://static.tvmaze.com/uploads/images/medium_portrait/0/1166.jpg",
+        "original": "https://static.tvmaze.com/uploads/images/original_untouched/0/1166.jpg"
+      },
+      "_links": {
+        "self": {
+          "href": "https://api.tvmaze.com/characters/67"
+        }
+      }
+    },
+    "self": false,
+    "voice": false
+  },
+  {
+    "person": {
+      "id": 92,
+      "url": "https://www.tvmaze.com/people/92/sarah-shahi",
+      "name": "Sarah Shahi",
+      "country": {
+        "name": "United States",
+        "code": "US",
+        "timezone": "America/New_York"
+      },
+      "birthday": "1980-01-10",
+      "deathday": null,
+      "gender": "Female",
+      "image": {
+        "medium": "https://static.tvmaze.com/uploads/images/medium_portrait/59/148423.jpg",
+        "original": "https://static.tvmaze.com/uploads/images/original_untouched/59/148423.jpg"
+      },
+      "updated": 1633138363,
+      "_links": {
+        "self": {
+          "href": "https://api.tvmaze.com/people/92"
+        }
+      }
+    },
+    "character": {
+      "id": 27030,
+      "url": "https://www.tvmaze.com/characters/27030/person-of-interest-sameen-shaw",
+      "name": "Sameen Shaw",
+      "image": {
+        "medium": "https://static.tvmaze.com/uploads/images/medium_portrait/0/14.jpg",
+        "original": "https://static.tvmaze.com/uploads/images/original_untouched/0/14.jpg"
+      },
+      "_links": {
+        "self": {
+          "href": "https://api.tvmaze.com/characters/27030"
+        }
+      }
+    },
+    "self": false,
+    "voice": false
+  },
+  {
+    "person": {
+      "id": 91,
+      "url": "https://www.tvmaze.com/people/91/amy-acker",
+      "name": "Amy Acker",
+      "country": {
+        "name": "United States",
+        "code": "US",
+        "timezone": "America/New_York"
+      },
+      "birthday": "1976-12-05",
+      "deathday": null,
+      "gender": "Female",
+      "image": {
+        "medium": "https://static.tvmaze.com/uploads/images/medium_portrait/335/837994.jpg",
+        "original": "https://static.tvmaze.com/uploads/images/original_untouched/335/837994.jpg"
+      },
+      "updated": 1650340081,
+      "_links": {
+        "self": {
+          "href": "https://api.tvmaze.com/people/91"
+        }
+      }
+    },
+    "character": {
+      "id": 552012,
+      "url": "https://www.tvmaze.com/characters/552012/person-of-interest-the-machine",
+      "name": "The Machine",
+      "image": null,
+      "_links": {
+        "self": {
+          "href": "https://api.tvmaze.com/characters/552012"
+        }
+      }
+    },
+    "self": false,
+    "voice": true
+  }
+]
