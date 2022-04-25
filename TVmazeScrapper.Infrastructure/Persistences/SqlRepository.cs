@@ -23,7 +23,7 @@ namespace TVmazeScrapper.Infrastructure.Persistences
 
         protected abstract string TempTable { get; }
 
-        public void Delete(Guid id)
+        public void Delete(long? id)
         {
             throw new NotImplementedException();
         }
@@ -33,7 +33,7 @@ namespace TVmazeScrapper.Infrastructure.Persistences
             throw new NotImplementedException();
         }
 
-        public T GetById(Guid id)
+        public virtual T GetById(long? id)
         {
             throw new NotImplementedException();
         }

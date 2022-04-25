@@ -12,7 +12,7 @@ namespace TVmazeScrapper.Domain.Interfaces
     {
         IEnumerable<T> GetAll(int offset, int pageSize);
 
-        T GetById(Guid id);
+        T GetById(long? id);
 
         void Insert(T data);
 
@@ -20,6 +20,6 @@ namespace TVmazeScrapper.Domain.Interfaces
 
         long Merge(DataTable data);
 
-        void Delete(Guid id);
+        void Delete(long? id);
     }
 }

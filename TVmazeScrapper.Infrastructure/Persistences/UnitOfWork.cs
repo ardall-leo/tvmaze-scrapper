@@ -53,6 +53,14 @@ namespace TVmazeScrapper.Infrastructure.Persistences
             return shows;
         }
 
+        public Show GetShow(long? id)
+        {
+            var show = _showRepository.GetById(id);
+            show.Cast = _castRepository.GetAll(show.Id);
+
+            return show;
+        }
+
         public void Dump(Show data)
         {
             DumpShow(data);

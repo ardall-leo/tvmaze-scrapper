@@ -96,6 +96,46 @@ namespace TVmazeScrapper.Infrastructure.Persistences
             Updated bigint)
         ";
 
+        protected const string GetQuery = @"
+            SELECT 
+                t1.Id,
+                t1.Url,
+                t1.Name,
+                t1.Type,
+                t1.Language,
+                t1.Genres,
+                t1.Status,
+                t1.Runtime,
+                t1.AverageRuntime,
+                t1.Premiered,
+                t1.Ended,
+                t1.OfficialSite,
+                t4.Time,
+                t4.Days,
+                t1.[Rating.Average],
+                t1.Weight,
+                t1.NetworkId,
+                t2.OfficialSite as NetworkOfficialSite,
+                t2.Name as NetworkName,
+                t3.Name as CountryName,
+                t3.Code as CountryCode,
+                t3.Timezone as CountryTimezone,
+                t1.WebChannel,
+                t1.DvdCountry,
+                t1.Summary,
+                t5.Medium as ImageMedium,
+                t5.Original as ImageOriginal,
+                t6.Tvrage,
+                t6.Thetvdb,
+                t6.Imdb,                                
+                t1.Updated
+            FROM [master].[dbo].[Show] t1
+                left join [master].[dbo].[Network] t2 on t2.Id = t1.NetworkId
+                left join [master].[dbo].[Country] t3 on t3.id = t2.CountryId
+                left join [master].[dbo].[Schedule] t4 on t4.ShowId = t1.Id
+                left join [master].[dbo].[Images] t5 on t5.Id = t1.ImageId
+                left join [master].[dbo].[Externals] t6 on t6.Id = t1.ExternalId";
+
         public long? GetLastId()
         {
             long? result = default;
@@ -123,6 +163,50 @@ namespace TVmazeScrapper.Infrastructure.Persistences
             return result;
         }
 
+        public override Show GetById(long? id)
+        {
+            Show result = new();
+            string sql = @$"
+                {GetQuery}
+                WHERE t1.Id = {id}
+            ";
+
+            using (var con = DbFactory.GetConnection(DatabaseType.TvMaze))
+            {
+                con.Open();
+
+                using (var comm = new SqlCommand())
+                {
+                    comm.Connection = (SqlConnection)con;
+                    try
+                    {
+                        comm.CommandText = sql;
+                        comm.CommandType = CommandType.Text;
+                        using (var reader = comm.ExecuteReader())
+                        {
+                            while (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
+                                    result = MapShow(reader);
+                                }
+
+                                reader.NextResult();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+
+                con.Close();
+            }
+
+            return result;
+        }
+
         public override IEnumerable<Show> GetAll(int offset, int pageSize)
         {
             List<Show> result = new();
@@ -136,44 +220,7 @@ namespace TVmazeScrapper.Infrastructure.Persistences
                     try
                     {
                         string sql = $@"
-                            SELECT 
-                                t1.Id,
-                                t1.Url,
-                                t1.Name,
-                                t1.Type,
-                                t1.Language,
-                                t1.Genres,
-                                t1.Status,
-                                t1.Runtime,
-                                t1.AverageRuntime,
-                                t1.Premiered,
-                                t1.Ended,
-                                t1.OfficialSite,
-                                t4.Time,
-                                t4.Days,
-                                t1.[Rating.Average],
-                                t1.Weight,
-                                t1.NetworkId,
-                                t2.OfficialSite as NetworkOfficialSite,
-                                t2.Name as NetworkName,
-                                t3.Name as CountryName,
-                                t3.Code as CountryCode,
-                                t3.Timezone as CountryTimezone,
-                                t1.WebChannel,
-                                t1.DvdCountry,
-                                t1.Summary,
-                                t5.Medium as ImageMedium,
-                                t5.Original as ImageOriginal,
-                                t6.Tvrage,
-                                t6.Thetvdb,
-                                t6.Imdb,                                
-                                t1.Updated
-                            FROM [master].[dbo].[Show] t1
-                                left join [master].[dbo].[Network] t2 on t2.Id = t1.NetworkId
-                                left join [master].[dbo].[Country] t3 on t3.id = t2.CountryId
-                                left join [master].[dbo].[Schedule] t4 on t4.ShowId = t1.Id
-                                left join [master].[dbo].[Images] t5 on t5.Id = t1.ImageId
-                                left join [master].[dbo].[Externals] t6 on t6.Id = t1.ExternalId
+                            {GetQuery}
                             ORDER BY ID
 						    OFFSET {pageSize * (offset - 1)} ROWS FETCH NEXT {pageSize} ROWS ONLY
                         ";
@@ -186,58 +233,7 @@ namespace TVmazeScrapper.Infrastructure.Persistences
                             {
                                 while (reader.Read())
                                 {
-                                    var show = new Show()
-                                    {
-                                        Id = (int)reader.GetInt64("Id"),
-                                        Url = reader.GetString("Url"),
-                                        Name = reader.GetString("Name"),
-                                        Type = reader.GetString("Type"),
-                                        Language = reader.GetString("Language"),
-                                        Genres = reader.GetString("Genres").Split(','),
-                                        Status = reader.GetString("Status"),
-                                        Runtime = (int)reader.GetInt64("Runtime"),
-                                        AverageRuntime = (int)reader.GetInt64("AverageRuntime"),
-                                        Premiered = reader.GetDateTime("Premiered"),
-                                        Ended = reader["Ended"] as DateTime?,
-                                        Rating = new Rating
-                                        {
-                                            Average = reader.GetDecimal("Rating.Average"),
-                                        },
-                                        OfficialSite = reader.GetString("OfficialSite"),
-                                        Schedule = new Schedule
-                                        {
-                                            Time = reader.GetString("Time"),
-                                            Days = reader.GetString("Days").Split(','),
-                                        },
-                                        Weight = reader.GetInt32("Weight"),
-                                        WebChannel = reader["WebChannel"] as string,
-                                        Network = new Network
-                                        {
-                                            OfficialSite = reader["NetworkOfficialSite"] as string,
-                                            Country = new Country
-                                            {
-                                                Code = reader["CountryCode"] as string,
-                                                Name = reader["CountryName"] as string,
-                                                Timezone =  reader["CountryTimezone"] as string
-                                            },
-                                            Id = reader["NetworkId"] as long?,
-                                            Name = reader["NetworkName"] as string
-                                        },
-                                        DvdCountry = reader["DvdCountry"] as string,
-                                        Summary = reader.GetString("Summary"),
-                                        Image = new Image
-                                        {
-                                            Medium = reader["ImageMedium"] as string,
-                                            Original = reader["ImageOriginal"] as string
-                                        },
-                                        Externals = new External
-                                        {
-                                            Imdb = reader.GetString("Imdb"),
-                                            Thetvdb = reader.GetInt64("Thetvdb"),
-                                            Tvrage = reader.GetInt64("Tvrage")
-                                        },
-                                        Updated = reader.GetInt64("Updated")
-                                    };
+                                    Show show = MapShow(reader);
 
                                     result.Add(show);
                                 }
@@ -257,6 +253,62 @@ namespace TVmazeScrapper.Infrastructure.Persistences
             }
 
             return result;
+        }
+
+        private static Show MapShow(SqlDataReader reader)
+        {
+            return new Show()
+            {
+                Id = (int)reader.GetInt64("Id"),
+                Url = reader.GetString("Url"),
+                Name = reader.GetString("Name"),
+                Type = reader.GetString("Type"),
+                Language = reader.GetString("Language"),
+                Genres = reader.GetString("Genres").Split(','),
+                Status = reader.GetString("Status"),
+                Runtime = (int)reader.GetInt64("Runtime"),
+                AverageRuntime = (int)reader.GetInt64("AverageRuntime"),
+                Premiered = reader.GetDateTime("Premiered"),
+                Ended = reader["Ended"] as DateTime?,
+                Rating = new Rating
+                {
+                    Average = reader.GetDecimal("Rating.Average"),
+                },
+                OfficialSite = reader.GetString("OfficialSite"),
+                Schedule = new Schedule
+                {
+                    Time = reader.GetString("Time"),
+                    Days = reader.GetString("Days").Split(','),
+                },
+                Weight = reader.GetInt32("Weight"),
+                WebChannel = reader["WebChannel"] as string,
+                Network = new Network
+                {
+                    OfficialSite = reader["NetworkOfficialSite"] as string,
+                    Country = new Country
+                    {
+                        Code = reader["CountryCode"] as string,
+                        Name = reader["CountryName"] as string,
+                        Timezone = reader["CountryTimezone"] as string
+                    },
+                    Id = reader["NetworkId"] as long?,
+                    Name = reader["NetworkName"] as string
+                },
+                DvdCountry = reader["DvdCountry"] as string,
+                Summary = reader.GetString("Summary"),
+                Image = new Image
+                {
+                    Medium = reader["ImageMedium"] as string,
+                    Original = reader["ImageOriginal"] as string
+                },
+                Externals = new External
+                {
+                    Imdb = reader.GetString("Imdb"),
+                    Thetvdb = reader.GetInt64("Thetvdb"),
+                    Tvrage = reader.GetInt64("Tvrage")
+                },
+                Updated = reader.GetInt64("Updated")
+            };
         }
     }
 }

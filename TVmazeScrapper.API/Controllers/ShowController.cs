@@ -6,7 +6,6 @@ using TVmazeScrapper.Infrastructure.Persistences;
 namespace TVmazeScrapper.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
     public class ShowController : ControllerBase
     {
         private readonly ILogger<ShowController> _logger;
@@ -18,12 +17,25 @@ namespace TVmazeScrapper.API.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpGet]
+        [HttpGet("shows")]
         public IActionResult Get(int offset, int pageSize)
         {
             try
             {
                 return Ok(_unitOfWork.GetShows(offset, pageSize));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("show/{id}")]
+        public IActionResult Get(long? id)
+        {
+            try
+            {
+                return Ok(_unitOfWork.GetShow(id));
             }
             catch (Exception)
             {

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using TVmazeScrapper.Domain.Interfaces;
@@ -28,6 +30,7 @@ namespace TVmazeScrapper.API
         {
             long? lastId = _showRepository.GetLastId();
             showId = lastId == null ? showId : lastId;
+            int retryAttempt = 1;
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -35,14 +38,19 @@ namespace TVmazeScrapper.API
                 {
                     _logger.LogInformation($"Scrapping showID {showId}");
                     await _webScrapper.ScrapIt(showId);
+                    await Task.Delay(_config.ScrappingInterval * 1000);
+
+                    showId++;
                 }
-                catch (System.Exception ex)
+                catch(SocketException ex)
+                {
+                    await Task.Delay((int)Math.Pow(2, retryAttempt) * 1000);
+                    continue;
+                }
+                catch (Exception ex)
                 {
                     _logger.LogError(ex.Message);
                 }
-
-                await Task.Delay(_config.ScrappingInterval * 1000);
-                showId++;
             }
         }
     }

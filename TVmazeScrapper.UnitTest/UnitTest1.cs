@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+using Moq;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -32,7 +34,7 @@ namespace TVmazeScrapper.UnitTest
                     new NetworkRepository(dbConnectionFactory),
                     new PersonRepository(dbConnectionFactory),
                     new CharacterRepository(dbConnectionFactory),
-                    new CastRepository(dbConnectionFactory),
+                    new CastRepository(Mock.Of<ILogger<CastRepository>>(), dbConnectionFactory),
                     new ImageRepository(dbConnectionFactory),
                     new ExternalRepository(dbConnectionFactory));
 
