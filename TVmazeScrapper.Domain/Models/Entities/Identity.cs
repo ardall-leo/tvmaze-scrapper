@@ -1,7 +1,10 @@
-﻿namespace TVmazeScrapper.Domain.Models.Entities
+﻿using Newtonsoft.Json;
+
+namespace TVmazeScrapper.Domain.Models.Entities
 {
     public record Identity
     {
-        public long Id { get; init; }
+        [JsonProperty(Order = -1)]
+        public virtual long? Id { get; init; }
     }
 }

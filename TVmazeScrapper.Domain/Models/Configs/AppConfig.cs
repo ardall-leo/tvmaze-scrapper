@@ -12,5 +12,10 @@ namespace TVmazeScrapper.Domain.Models.Configs
 
         public bool UseMigration { get; init; }
 
+        /// <summary>
+        /// The seconds interval for next scrapping attempt
+        /// </summary>
+        public int ScrappingInterval { get; init; }
+
     }
 }

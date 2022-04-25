@@ -28,7 +28,7 @@ namespace TVmazeScrapper.Infrastructure.Persistences
             throw new NotImplementedException();
         }
 
-        public virtual IEnumerable<T> GetAll()
+        public virtual IEnumerable<T> GetAll(int offset, int pageSize)
         {
             throw new NotImplementedException();
         }

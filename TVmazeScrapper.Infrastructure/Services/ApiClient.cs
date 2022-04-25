@@ -23,7 +23,10 @@ namespace TVmazeScrapper.Infrastructure.Services
         public virtual async Task<T> SendRequest<T>(string endpoint, HttpMethod method, string data) where T : class
         {
             var request = new HttpRequestMessage(method, endpoint);
-            request.Content = new StringContent(data, Encoding.UTF8, "application/json");
+            if (data is not null)
+            {
+                request.Content = new StringContent(data, Encoding.UTF8, "application/json");
+            }
 
             T result;
             using (HttpResponseMessage response = await Client.SendAsync(request))

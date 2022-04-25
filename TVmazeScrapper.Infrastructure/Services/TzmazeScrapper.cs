@@ -1,20 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using TVmazeScrapper.Domain.Interfaces;
+using TVmazeScrapper.Domain.Models.Entities;
+using TVmazeScrapper.Infrastructure.Persistences;
 
 namespace TVmazeScrapper.Infrastructure.Services
 {
     public class TzmazeScrapper : ApiClient, IWebScrapper
     {
-        public Task<T> FetchData<T>(string endpoint) where T : class
-        {
-            return this.SendRequest<T>(endpoint, HttpMethod.Get, null);
-        }
+        private UnitOfWork _unitOfWork;
 
-        public Task StoreData<T>(T data) where T : class
+        public TzmazeScrapper(UnitOfWork unitOfWork)
         {
-            throw new NotImplementedException();
+            _unitOfWork = unitOfWork;
+        }
+        public async Task ScrapIt(long? showId)
+        {
+            var show = await this.SendRequest<Show>($@"https://api.tvmaze.com/shows/{showId}", HttpMethod.Get, null);
+            _unitOfWork.Dump(show);
+            var cast = await this.SendRequest<IEnumerable<Cast>>($@"https://api.tvmaze.com/shows/{showId}/cast", HttpMethod.Get, null);
+            _unitOfWork.Dump(show.Id, cast);
         }
     }
 }

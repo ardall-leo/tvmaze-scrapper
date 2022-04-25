@@ -9,67 +9,34 @@ namespace TVmazeScrapper.API.Migrations
         public override void Down()
         {
             Delete.Table("Schedule");
-            Delete.Table("Network");
             Delete.Table("Cast");
             Delete.Table("Character");
             Delete.Table("Person");
+            Delete.Table("Show");
+            Delete.Table("Network");
             Delete.Table("Country");
             Delete.Table("Images");
-            Delete.Table("Genres");
-            Delete.Table("ShowGenres");
             Delete.Table("Externals");
-            Delete.Table("Show");
         }
 
         public override void Up()
         {
-            Create.Table("Show")
-                .WithColumn("Id").AsInt64().PrimaryKey()
-                .WithColumn("Url").AsString().Nullable()
-                .WithColumn("Name").AsString().Nullable()
-                .WithColumn("Type").AsString().Nullable()
-                .WithColumn("Language").AsString().Nullable()
-                .WithColumn("Status").AsString().Nullable()
-                .WithColumn("Runtime").AsInt64().Nullable()
-                .WithColumn("AverageRuntime").AsInt64().Nullable()
-                .WithColumn("Premiered").AsDate().Nullable()
-                .WithColumn("Ended").AsDate().Nullable()
-                .WithColumn("OfficialSite").AsString().Nullable()
-                .WithColumn("Rating").AsDecimal().Nullable()
-                .WithColumn("Weight").AsInt32().Nullable()
-                .WithColumn("NetworkId").AsInt64().Nullable()
-                .WithColumn("WebChannel").AsString().Nullable()
-                .WithColumn("DvdCountry").AsString().Nullable()
-                .WithColumn("Image").AsDate().Nullable()
-                .WithColumn("Summary").AsString(4001).Nullable()
-                .WithColumn("Updated").AsInt64().Nullable();
-
             Create.Table("Images")
                 .WithColumn("Id").AsInt64().PrimaryKey().Identity(1, 1)
                 .WithColumn("Medium").AsString().Nullable()
-                .WithColumn("Original").AsString().Nullable();
+                .WithColumn("Original").AsString().Nullable()
+                .WithColumn("Type").AsString().NotNullable()
+                .WithColumn("OwnerId").AsInt64().NotNullable();
 
-            Create.Table("Genres")
-                .WithColumn("Id").AsString().Nullable()
-                .WithColumn("Genre").AsString().Nullable();
-
-            Create.Table("ShowGenres")
-                .WithColumn("Id").AsString().Nullable()
-                .WithColumn("ShowId").AsString().Nullable()
-                .WithColumn("GenreId").AsString().Nullable();
+            Create.UniqueConstraint("ImagesTypeAndOwnerId")
+                .OnTable("Images")
+                .Columns("Type", "OwnerId");
 
             Create.Table("Externals")
                 .WithColumn("Id").AsInt64().PrimaryKey().Identity(1, 1)
-                .WithColumn("ShowId").AsString().Nullable()
-                .WithColumn("Tvrage").AsString().Nullable()
-                .WithColumn("Thetvdb").AsString().Nullable()
+                .WithColumn("Tvrage").AsInt64().Nullable()
+                .WithColumn("Thetvdb").AsInt64().Nullable()
                 .WithColumn("Imdb").AsString().Nullable();
-
-            Create.Table("Schedule")
-                .WithColumn("Id").AsInt64().PrimaryKey().Identity(1, 1)
-                .WithColumn("Time").AsString().Nullable().Unique()
-                .WithColumn("Days").AsString().Nullable().Unique()
-                .WithColumn("ShowId").AsInt64().ForeignKey("Show", "Id").Unique();
 
             Create.Table("Country")
                .WithColumn("Id").AsInt64().PrimaryKey().Identity(1, 1)
@@ -81,31 +48,67 @@ namespace TVmazeScrapper.API.Migrations
                 .WithColumn("Id").AsInt64().PrimaryKey()
                 .WithColumn("Name").AsString().Nullable()
                 .WithColumn("CountryId").AsInt64().ForeignKey("Country", "Id")
+                .WithColumn("OfficialSite").AsString().Nullable();
+
+            Create.Table("Show")
+                .WithColumn("Id").AsInt64().PrimaryKey()
+                .WithColumn("Url").AsString().Nullable()
+                .WithColumn("Name").AsString().Nullable()
+                .WithColumn("Type").AsString().Nullable()
+                .WithColumn("Language").AsString().Nullable()
+                .WithColumn("Genres").AsString().Nullable()
+                .WithColumn("Status").AsString().Nullable()
+                .WithColumn("Runtime").AsInt64().Nullable()
+                .WithColumn("AverageRuntime").AsInt64().Nullable()
+                .WithColumn("Premiered").AsDate().Nullable()
+                .WithColumn("Ended").AsDate().Nullable()
                 .WithColumn("OfficialSite").AsString().Nullable()
+                .WithColumn("Rating.Average").AsDecimal().Nullable()
+                .WithColumn("Weight").AsInt32().Nullable()
+                .WithColumn("NetworkId").AsInt64().Nullable().ForeignKey("Network", "Id")
+                .WithColumn("WebChannel").AsString().Nullable()
+                .WithColumn("DvdCountry").AsString().Nullable()
+                .WithColumn("ImageId").AsInt64().ForeignKey("Images", "Id")
+                .WithColumn("ExternalId").AsInt64().ForeignKey("Externals", "Id")
+                .WithColumn("Summary").AsString(4001).Nullable()
+                .WithColumn("Updated").AsInt64().Nullable();
+
+            Create.Table("Schedule")
+                .WithColumn("Id").AsInt64().PrimaryKey().Identity(1, 1)
+                .WithColumn("Time").AsString().Nullable()
+                .WithColumn("Days").AsString().Nullable()
                 .WithColumn("ShowId").AsInt64().ForeignKey("Show", "Id");
+
+            Create.UniqueConstraint("ScheduleTimeDays")
+              .OnTable("Schedule")
+              .Columns("Time", "Days", "ShowId");
 
             Create.Table("Person")
                 .WithColumn("Id").AsInt64().PrimaryKey()
                 .WithColumn("Url").AsString().Nullable()
                 .WithColumn("Name").AsString().Nullable()
-                .WithColumn("CountryId").AsInt64().ForeignKey("Country", "Id")
+                .WithColumn("CountryId").AsInt64().Nullable().ForeignKey("Country", "Id")
                 .WithColumn("Birthday").AsDate().Nullable()
                 .WithColumn("Deadday").AsDate().Nullable()
                 .WithColumn("Gender").AsString().Nullable()
-                .WithColumn("Image").AsInt64().Nullable()
+                .WithColumn("ImageId").AsInt64().Nullable().ForeignKey("Images", "Id")
                 .WithColumn("Updated").AsInt64().Nullable();
 
             Create.Table("Character")
                 .WithColumn("Id").AsInt64().PrimaryKey()
                 .WithColumn("Url").AsString().Nullable()
                 .WithColumn("Name").AsString().NotNullable()
-                .WithColumn("Image").AsInt64().Nullable();
+                .WithColumn("ImageId").AsInt64().Nullable().ForeignKey("Images", "Id");
 
             Create.Table("Cast")
                 .WithColumn("Id").AsInt64().PrimaryKey().Identity(1, 1)
-                .WithColumn("ShowId").AsInt64().ForeignKey("Show", "Id").Unique()
-                .WithColumn("PersonId").AsInt64().ForeignKey("Person", "Id").Unique()
-                .WithColumn("CharacterId").AsInt64().ForeignKey("Character", "Id").Unique();
+                .WithColumn("ShowId").AsInt64().ForeignKey("Show", "Id")
+                .WithColumn("PersonId").AsInt64().ForeignKey("Person", "Id")
+                .WithColumn("CharacterId").AsInt64().Nullable().ForeignKey("Character", "Id");
+
+            Create.UniqueConstraint("CastShowPersonCharacter")
+              .OnTable("Cast")
+              .Columns("ShowId", "PersonId", "CharacterId");
         }
     }
 }

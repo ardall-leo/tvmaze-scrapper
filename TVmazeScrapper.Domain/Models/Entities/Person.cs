@@ -11,11 +11,11 @@ namespace TVmazeScrapper.Domain.Models.Entities
 
         public Country Country { get; init; }
 
-        public DateTime Birthday { get; init; }
+        public DateTime? Birthday { get; init; }
 
-        public DateTime Deadday { get; init; }
+        public DateTime? Deadday { get; init; }
 
-        public Gender Gender { get; init; }
+        public Gender? Gender { get; init; }
 
         public Image Image { get; init; }
 

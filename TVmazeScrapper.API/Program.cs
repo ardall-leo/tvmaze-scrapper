@@ -8,9 +8,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TVmazeScrapper.API;
+using TVmazeScrapper.API.Extensions;
 using TVmazeScrapper.Domain.Interfaces;
 using TVmazeScrapper.Domain.Models.Configs;
 using TVmazeScrapper.Infrastructure.Persistences;
+using TVmazeScrapper.Infrastructure.Services;
 
 try
 {
@@ -25,8 +27,8 @@ try
             var rootConfig = new AppConfig();
             config.Bind("AppConfig", rootConfig);
             services.AddSingleton(rootConfig);
-            services.AddScoped<ShowRepository>();
-            services.AddSingleton<IDbConnectionFactory, DbFactory>();
+            services.AddDbRepository();
+            services.AddSingleton<IWebScrapper, TzmazeScrapper>();
             services.AddHostedService<Scrapper>(); 
         })
         .Build();

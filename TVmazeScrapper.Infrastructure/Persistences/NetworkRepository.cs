@@ -15,19 +15,18 @@ namespace TVmazeScrapper.Infrastructure.Persistences
         protected override string TableName => "dbo.Network";
 
         protected override string MergeInsertData => @"
-            INSERT (Id, Name, CountryId, OfficialSite, ShowId)
-            VALUES (Source.Id, Source.Name, Source.CountryId, Source.OfficialSite, Source.ShowId)
+            INSERT (Id, Name, CountryId, OfficialSite)
+            VALUES (Source.Id, Source.Name, Source.CountryId, Source.OfficialSite)
         ";
 
-        protected override string MergeUpdateData => "UPDATE SET Target.Name = Source.Name, Target.CountryId = Source.CountryId, Target.OfficialSite = Source.OfficialSite, Target.ShowId = Source.ShowId";
+        protected override string MergeUpdateData => "UPDATE SET Target.Name = Source.Name, Target.CountryId = Source.CountryId, Target.OfficialSite = Source.OfficialSite";
 
         protected override string TempTable => @"
             CREATE TABLE #tmpTable(
             Id int,
             Name varchar(255),
             CountryId int,
-            OfficialSite varchar(255),
-            ShowId int)
+            OfficialSite varchar(255))
         ";
     }
 }

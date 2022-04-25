@@ -10,7 +10,7 @@ namespace TVmazeScrapper.Domain.Interfaces
 {
     public interface IDbRepository<T> where T: Identity
     {
-        IEnumerable<T> GetAll();
+        IEnumerable<T> GetAll(int offset, int pageSize);
 
         T GetById(Guid id);
 

@@ -29,7 +29,7 @@ namespace TVmazeScrapper.Infrastructure.Persistences
                 Birthday,
                 Deadday,
                 Gender,
-                Image,
+                ImageId,
                 Updated)
             VALUES (
                 Source.Id,
@@ -39,7 +39,7 @@ namespace TVmazeScrapper.Infrastructure.Persistences
                 Source.Birthday,
                 Source.Deadday,
                 Source.Gender,
-                Source.Image,
+                Source.ImageId,
                 Source.Updated)
         ";
 
@@ -54,7 +54,7 @@ namespace TVmazeScrapper.Infrastructure.Persistences
             Birthday Date,
             Deadday Date,
             Gender varchar(255),
-            Image int,
+            ImageId bigint,
             Updated bigint)
         ";
     }

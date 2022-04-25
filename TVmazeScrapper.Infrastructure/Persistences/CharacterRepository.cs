@@ -24,11 +24,13 @@ namespace TVmazeScrapper.Infrastructure.Persistences
             INSERT (
                 Id,
                 Url,
-                Name)
+                Name,
+                ImageId)
             VALUES (
                 Source.Id,
                 Source.Url,
-                Source.Name)
+                Source.Name,
+                Source.ImageId)
         ";
 
         protected override string MergeUpdateData => "UPDATE SET Target.Url = Source.Url, Target.Name = Source.Name";
@@ -37,7 +39,8 @@ namespace TVmazeScrapper.Infrastructure.Persistences
             CREATE TABLE #tmpTable(
             Id int,
             Url varchar(255),
-            Name varchar(255))
+            Name varchar(255),
+            ImageId bigint)
         ";
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace TVmazeScrapper.Domain.Models.Entities
 {
@@ -24,7 +23,7 @@ namespace TVmazeScrapper.Domain.Models.Entities
 
         public DateTime Premiered { get; init; }
 
-        public DateTime Ended { get; init; }
+        public DateTime? Ended { get; init; }
 
         public string OfficialSite { get; init; }
 
@@ -48,6 +47,6 @@ namespace TVmazeScrapper.Domain.Models.Entities
 
         public long Updated { get; init; }
 
-        public List<Cast> Cast { get; init; } = new();
+        public List<Cast> Cast { get; set; } = new();
     }
 }

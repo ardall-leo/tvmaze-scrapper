@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using TVmazeScrapper.API.Middleware;
 
 namespace TVmazeScrapper.API
 {
@@ -34,7 +35,9 @@ namespace TVmazeScrapper.API
                    .ScanIn(Assembly.GetExecutingAssembly()).For.All())
                .AddLogging(lb => lb.AddFluentMigratorConsole());
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson(options => options.SerializerSettings.DateFormatString = "yyyy-MM-dd");
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TVmazeScrapper.API", Version = "v1" });
@@ -52,11 +55,12 @@ namespace TVmazeScrapper.API
             }
 
             using var scope = app.ApplicationServices.CreateScope();
-           var runner = scope.ServiceProvider.GetService<IMigrationRunner>();
-           //runner.ListMigrations();
-           //runner.MigrateDown(-1);
-           //runner.MigrateUp();
+            var runner = scope.ServiceProvider.GetService<IMigrationRunner>();
+            runner.ListMigrations();
+            runner.MigrateDown(-1);
+            runner.MigrateUp();
 
+            app.UseMiddleware<ExceptionMiddleware>();
             app.UseHttpsRedirection();
 
             app.UseRouting();

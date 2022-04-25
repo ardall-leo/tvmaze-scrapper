@@ -32,7 +32,9 @@ namespace TVmazeScrapper.UnitTest
                     new NetworkRepository(dbConnectionFactory),
                     new PersonRepository(dbConnectionFactory),
                     new CharacterRepository(dbConnectionFactory),
-                    new CastRepository(dbConnectionFactory));
+                    new CastRepository(dbConnectionFactory),
+                    new ImageRepository(dbConnectionFactory),
+                    new ExternalRepository(dbConnectionFactory));
 
                 u.Dump(x);
                 u.Dump(x.Id, y);

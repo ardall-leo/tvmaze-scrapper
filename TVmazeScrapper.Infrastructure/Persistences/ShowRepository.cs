@@ -29,15 +29,20 @@ namespace TVmazeScrapper.Infrastructure.Persistences
                 Name,
                 Type,
                 Language,
+                Genres,
                 Status,
                 Runtime,
                 AverageRuntime,
                 Premiered,
                 Ended,
                 OfficialSite,
+                [Rating.Average],
                 Weight,
                 WebChannel, 
                 DvdCountry,
+                ImageId,
+                ExternalId,
+                NetworkId,
                 Summary,
                 Updated)
             VALUES (
@@ -46,15 +51,20 @@ namespace TVmazeScrapper.Infrastructure.Persistences
                 Source.Name,
                 Source.Type,
                 Source.Language,
+                Source.Genres,
                 Source.Status,
                 Source.Runtime,
                 Source.AverageRuntime,
                 Source.Premiered,
                 Source.Ended,
                 Source.OfficialSite,
+                Source.[Rating.Average],
                 Source.Weight,
                 Source.WebChannel,
                 Source.DvdCountry,
+                Source.ImageId,
+                Source.ExternalId,
+                Source.NetworkId,
                 Source.Summary,
                 Source.Updated)
         ";
@@ -68,20 +78,52 @@ namespace TVmazeScrapper.Infrastructure.Persistences
             Name varchar(255),
             Type varchar(255),
             Language varchar(255),
+            Genres varchar(255),
             Status varchar(255),
             Runtime int,
             AverageRuntime int,
             Premiered Date,
             Ended Date,
             OfficialSite varchar(255),
+            [Rating.Average] decimal,
             Weight int,
             WebChannel varchar(255),
             DvdCountry varchar(255),
+            ImageId bigint,
+            ExternalId bigint,
+            NetworkId bigint,
             Summary text,
             Updated bigint)
         ";
 
-        public override IEnumerable<Show> GetAll()
+        public long? GetLastId()
+        {
+            long? result = default;
+            using (var con = DbFactory.GetConnection(DatabaseType.TvMaze))
+            {
+                con.Open();
+
+                using (var comm = new SqlCommand())
+                {
+                    comm.Connection = (SqlConnection)con;
+                    try
+                    {
+                        string sql = $"SELECT TOP 1 Id FROM {TableName} ORDER BY ID DESC";
+                        comm.CommandText = sql;
+                        comm.CommandType = CommandType.Text;
+                        result = (long?)comm.ExecuteScalar();
+                    }
+                    catch
+                    {
+
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public override IEnumerable<Show> GetAll(int offset, int pageSize)
         {
             List<Show> result = new();
             using (var con = DbFactory.GetConnection(DatabaseType.TvMaze))
@@ -93,13 +135,14 @@ namespace TVmazeScrapper.Infrastructure.Persistences
                     comm.Connection = (SqlConnection)con;
                     try
                     {
-                        string sql = @"
+                        string sql = $@"
                             SELECT 
                                 t1.Id,
                                 t1.Url,
                                 t1.Name,
                                 t1.Type,
                                 t1.Language,
+                                t1.Genres,
                                 t1.Status,
                                 t1.Runtime,
                                 t1.AverageRuntime,
@@ -108,8 +151,9 @@ namespace TVmazeScrapper.Infrastructure.Persistences
                                 t1.OfficialSite,
                                 t4.Time,
                                 t4.Days,
+                                t1.[Rating.Average],
                                 t1.Weight,
-                                t2.Id as NetworkId,
+                                t1.NetworkId,
                                 t2.OfficialSite as NetworkOfficialSite,
                                 t2.Name as NetworkName,
                                 t3.Name as CountryName,
@@ -118,31 +162,20 @@ namespace TVmazeScrapper.Infrastructure.Persistences
                                 t1.WebChannel,
                                 t1.DvdCountry,
                                 t1.Summary,
+                                t5.Medium as ImageMedium,
+                                t5.Original as ImageOriginal,
+                                t6.Tvrage,
+                                t6.Thetvdb,
+                                t6.Imdb,                                
                                 t1.Updated
                             FROM [master].[dbo].[Show] t1
-                                left join [master].[dbo].[Network] t2 on t1.Id = t2.ShowId
+                                left join [master].[dbo].[Network] t2 on t2.Id = t1.NetworkId
                                 left join [master].[dbo].[Country] t3 on t3.id = t2.CountryId
-                                left join [master].[dbo].[Schedule] t4 on t4.ShowId = t1.Id;
-                            
-                            SELECT
-                                t3.Name,
-                                t3.Birthday,
-                                t5.Code as CountryCode,
-                                t5.Name as CountryName,
-                                t5.Timezone as CountryTimezone,
-                                t3.Gender,
-                                t3.Deadday,
-                                t3.Updated,
-                                t3.Url,
-                                t3.Id,
-                                t4.Url as CharacterUrl,
-                                t4.Name as CharacterName,
-                                t4.Id as CharacterId
-                             FROM [master].[dbo].[Show] t1
-	                            left join [master].[dbo].[Cast] t2 on t2.ShowId = t1.Id
-	                            left join [master].[dbo].[Person] t3 on t3.Id = t2.PersonId
-	                            left join [master].[dbo].[Character] t4 on t4.Id = t2.CharacterId
-                                left join [master].[dbo].[Country] t5 on t5.id = t3.CountryId;
+                                left join [master].[dbo].[Schedule] t4 on t4.ShowId = t1.Id
+                                left join [master].[dbo].[Images] t5 on t5.Id = t1.ImageId
+                                left join [master].[dbo].[Externals] t6 on t6.Id = t1.ExternalId
+                            ORDER BY ID
+						    OFFSET {pageSize * (offset - 1)} ROWS FETCH NEXT {pageSize} ROWS ONLY
                         ";
 
                         comm.CommandText = sql;
@@ -151,21 +184,25 @@ namespace TVmazeScrapper.Infrastructure.Persistences
                         {
                             while (reader.HasRows)
                             {
-                                Show show = new();
                                 while (reader.Read())
                                 {
-                                    show = show with
+                                    var show = new Show()
                                     {
                                         Id = (int)reader.GetInt64("Id"),
                                         Url = reader.GetString("Url"),
                                         Name = reader.GetString("Name"),
                                         Type = reader.GetString("Type"),
                                         Language = reader.GetString("Language"),
+                                        Genres = reader.GetString("Genres").Split(','),
                                         Status = reader.GetString("Status"),
                                         Runtime = (int)reader.GetInt64("Runtime"),
                                         AverageRuntime = (int)reader.GetInt64("AverageRuntime"),
                                         Premiered = reader.GetDateTime("Premiered"),
-                                        Ended = reader.GetDateTime("Ended"),
+                                        Ended = reader["Ended"] as DateTime?,
+                                        Rating = new Rating
+                                        {
+                                            Average = reader.GetDecimal("Rating.Average"),
+                                        },
                                         OfficialSite = reader.GetString("OfficialSite"),
                                         Schedule = new Schedule
                                         {
@@ -176,54 +213,35 @@ namespace TVmazeScrapper.Infrastructure.Persistences
                                         WebChannel = reader["WebChannel"] as string,
                                         Network = new Network
                                         {
-                                            OfficialSite = reader.GetString("NetworkOfficialSite"),
+                                            OfficialSite = reader["NetworkOfficialSite"] as string,
                                             Country = new Country
                                             {
-                                                Code = reader.GetString("CountryCode"),
-                                                Name = reader.GetString("CountryName"),
-                                                Timezone = reader.GetString("CountryTimezone"),
+                                                Code = reader["CountryCode"] as string,
+                                                Name = reader["CountryName"] as string,
+                                                Timezone =  reader["CountryTimezone"] as string
                                             },
-                                            Id = (int)reader.GetInt64("NetworkId"),
-                                            Name = reader.GetString("NetworkName")
+                                            Id = reader["NetworkId"] as long?,
+                                            Name = reader["NetworkName"] as string
                                         },
                                         DvdCountry = reader["DvdCountry"] as string,
                                         Summary = reader.GetString("Summary"),
+                                        Image = new Image
+                                        {
+                                            Medium = reader["ImageMedium"] as string,
+                                            Original = reader["ImageOriginal"] as string
+                                        },
+                                        Externals = new External
+                                        {
+                                            Imdb = reader.GetString("Imdb"),
+                                            Thetvdb = reader.GetInt64("Thetvdb"),
+                                            Tvrage = reader.GetInt64("Tvrage")
+                                        },
                                         Updated = reader.GetInt64("Updated")
                                     };
+
+                                    result.Add(show);
                                 }
 
-                                reader.NextResult();
-
-                                while (reader.Read())
-                                {
-                                    show.Cast.Add(new Cast
-                                    {
-                                        Person = new Person
-                                        {
-                                            Id = reader.GetInt64("Id"),
-                                            Name = reader.GetString("Name"),
-                                            Birthday = reader.GetDateTime("Birthday"),
-                                            Country = new Country
-                                            {
-                                                Code = reader.GetString("CountryCode"),
-                                                Name = reader.GetString("CountryName"),
-                                                Timezone = reader.GetString("CountryTimezone"),
-                                            },
-                                            Gender = (Gender)Enum.Parse(typeof(Gender), reader.GetString("Gender")),
-                                            Deadday = reader.GetDateTime("Deadday"),
-                                            Updated = reader.GetInt64("Updated"),
-                                            Url = reader.GetString("Url"),
-                                        },
-                                        Character = new Character
-                                        {
-                                            Id = reader.GetInt64("CharacterId"),
-                                            Name = reader.GetString("CharacterName"),
-                                            Url = reader.GetString("CharacterUrl"),
-                                        }
-                                    });
-                                }
-
-                                result.Add(show);
 
                                 reader.NextResult();
                             }
@@ -231,7 +249,7 @@ namespace TVmazeScrapper.Infrastructure.Persistences
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(ex.Message);
+                        Console.WriteLine(ex.ToString());
                     }
                 }
 

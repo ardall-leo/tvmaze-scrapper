@@ -8,6 +8,7 @@ namespace TVmazeScrapper.Domain.Enums
 {
     public enum Gender
     {
+        Unknown,
         Male,
         Female
     }
