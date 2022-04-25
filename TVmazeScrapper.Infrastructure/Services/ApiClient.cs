@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using TVmazeScrapper.Domain.Models.Exceptions;
 
 namespace TVmazeScrapper.Infrastructure.Services
 {
@@ -32,7 +33,14 @@ namespace TVmazeScrapper.Infrastructure.Services
             using (HttpResponseMessage response = await Client.SendAsync(request))
             {
                 string content = await response.Content.ReadAsStringAsync();
-                result = JsonConvert.DeserializeObject<T>(content);
+                if (response.IsSuccessStatusCode)
+                {
+                    result = JsonConvert.DeserializeObject<T>(content);
+                }
+                else
+                {
+                    throw new ScrapException(response.StatusCode);
+                }
             }
 
             return result;
